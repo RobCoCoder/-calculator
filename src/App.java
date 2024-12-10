@@ -1,7 +1,6 @@
 package src;
 
 import javax.swing.*;
-import javax.tools.Tool;
 import java.awt.*;
 
 public class App {
