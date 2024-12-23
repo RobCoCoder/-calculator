@@ -1,8 +1,13 @@
 package src.state;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class OutputData {
-    private static String commandInput = "Default value";
-    private static String calculatedOutput = "Default value";
+    private static ArrayList<Component> subscribers = new ArrayList<Component>();
+
+    private static String commandInput = "0";
+    private static String calculatedOutput = "";
 
     public static String getCommandInput(){
         return commandInput;
@@ -11,6 +16,7 @@ public class OutputData {
     public static void setCommandInput(String str){
         if(str != null) {
             commandInput = str;
+            repaintSubscribers();
         }
     }
 
@@ -18,11 +24,20 @@ public class OutputData {
         return calculatedOutput;
     }
 
-    public static void setCalculatedOutput(String str){
-        if(str != null){
+    public static void setCalculatedOutput(String str) {
+        if (str != null) {
             calculatedOutput = str;
+            repaintSubscribers();
         }
     }
 
+    public static void addSubscriber(Component c){
+        subscribers.add(c);
+    }
 
+    private static void repaintSubscribers(){
+        for(Component subscriber : subscribers){
+            subscriber.repaint();
+        }
+    }
 }

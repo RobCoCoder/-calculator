@@ -1,9 +1,7 @@
 package src.components;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 
 import src.state.OutputData;
 
@@ -14,6 +12,11 @@ public class IOViewer extends JPanel {
     // dimensions of the panel
     private int width = 10;
     private int height = 10;
+
+    // components
+    private JTextField outputField;
+    private JTextField inputField;
+
 
     public IOViewer(int width, int height) {
         if(width >= 0 && height >= 0) {
@@ -29,12 +32,37 @@ public class IOViewer extends JPanel {
         setLayout(new GridLayout(2, 1));
 
         // adds output line component
-        TextField outputField = new TextField(this.width, this.height / 2, OutputData.getCalculatedOutput());
+        outputField = new JTextField();
+        outputField.setText(OutputData.getCalculatedOutput());
+        outputField.setSize(this.width, this.height / 2);
+        outputField.setHorizontalAlignment(SwingConstants.RIGHT);
+        outputField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        outputField.setEnabled(false);
+        OutputData.addSubscriber(outputField);
         add(outputField);
 
         // adds input line component
-        TextField inputField = new TextField(this.width, this.height / 2, OutputData.getCommandInput());
+        inputField = new JTextField();
+        inputField.setText(OutputData.getCommandInput());
+        inputField.setSize(this.width, this.height / 2);
+        inputField.setHorizontalAlignment(SwingConstants.RIGHT);
+        inputField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+        inputField.setEnabled(false);
+        OutputData.addSubscriber(inputField);
         add(inputField);
+    }
+
+    @Override
+    public void repaint() {
+        if(outputField != null){
+            outputField.setText(OutputData.getCalculatedOutput());
+            outputField.repaint();
+        }
+        if(inputField != null){
+            inputField.setText(OutputData.getCommandInput());
+            inputField.repaint();
+        }
+        super.repaint();
     }
 
     @Override

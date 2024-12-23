@@ -3,6 +3,7 @@ package src;
 import src.components.IOViewer;
 import src.components.TextField;
 import src.components.controls.ControlMenu;
+import src.state.OutputData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,9 +40,12 @@ class AppFrame extends JFrame {
         setLayout(new FlowLayout());
 
         //panels
-        add(new IOViewer(frameWidth, frameHeight * 20 / 100)); // adds the calculator input/output screen
-        add(new ControlMenu(frameWidth, frameHeight * 80 / 100));
+        IOViewer ioViewer = new IOViewer(frameWidth, frameHeight * 20 / 100);
+        OutputData.addSubscriber(ioViewer);
+        add(ioViewer); // adds the calculator input/output screen
 
+        ControlMenu controlMenu = new ControlMenu(frameWidth, frameHeight * 80 / 100);
+        add(controlMenu);
     }
 }
 
