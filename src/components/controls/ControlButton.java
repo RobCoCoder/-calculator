@@ -1,6 +1,8 @@
 package src.components.controls;
 
 import src.state.OutputData;
+import src.utilities.ArrayUtils;
+import src.utilities.ExpEvaluator;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -12,8 +14,8 @@ import java.awt.event.ActionListener;
 
 
 public class ControlButton extends JButton {
-    private static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
-    private static ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("JavaScript");
+    private static final ScriptEngineManager sem = new ScriptEngineManager();
+    private static final ScriptEngine scriptEngine = sem.getEngineByName("JavaScript");
 
     public ControlButton(String type) {
         super(type);
@@ -31,16 +33,35 @@ public class ControlButton extends JButton {
                         //FIXME
                         break;
                     case "=":
-                        try {
-                            String result = (scriptEngine.eval(OutputData.getCommandInput())).toString();
-                            OutputData.setCalculatedOutput(result);
-                        } catch (ScriptException ex) {
-                            OutputData.setCalculatedOutput("Error");
-                        }
+                        OutputData.setCalculatedOutput("" + ExpEvaluator.evaluate(OutputData.getCommandInput()));
                         OutputData.setCommandInput("0");
                         break;
                     case "+", "-", "x", "÷", "%", ".":
-                        OutputData.setCommandInput(OutputData.getCommandInput() + type);
+                        char lastChar = OutputData.getCommandInput().charAt(OutputData.getCommandInput().length()-1);
+                        if(lastChar == '+' || lastChar == '-' || lastChar == 'x' || lastChar == '÷' || lastChar == '%'){
+                            if(type.equals(".")){
+                                OutputData.setCommandInput(OutputData.getCommandInput() + "0" + type);
+                            }
+                            else{
+                                OutputData.setCommandInput(OutputData.getCommandInput().substring(0, OutputData.getCommandInput().length()-1) + type);
+                            }
+                        }
+                        else if(type.equals(".")){
+                            int lastPlusIndex = OutputData.getCommandInput().lastIndexOf("+");
+                            int lastMinusIndex = OutputData.getCommandInput().lastIndexOf("-");
+                            int lastMultipIndex = OutputData.getCommandInput().lastIndexOf("x");
+                            int lastDivisionIndex = OutputData.getCommandInput().lastIndexOf("÷");
+                            int lastModIndex = OutputData.getCommandInput().lastIndexOf("%");
+                            int lastDotIndex = OutputData.getCommandInput().lastIndexOf(".");
+                            int[] indicesArr = {lastPlusIndex, lastMinusIndex, lastMultipIndex, lastDivisionIndex, lastModIndex, lastDotIndex};
+
+                            if(ArrayUtils.findMax(indicesArr, 0, indicesArr.length-1) != lastDotIndex){
+                                OutputData.setCommandInput(OutputData.getCommandInput() + type);
+                            }
+                        }
+                        else{
+                            OutputData.setCommandInput(OutputData.getCommandInput() + type);
+                        }
                         break;
                     default:
                         if(OutputData.getCommandInput().equals("0")){

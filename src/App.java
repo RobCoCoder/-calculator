@@ -16,7 +16,7 @@ public class App {
             var frame = new AppFrame(); // main app frame
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exit when closing window
             frame.setVisible(true);
-            frame.setResizable(false);
+            frame.setResizable(true);
         });
     }
 }
