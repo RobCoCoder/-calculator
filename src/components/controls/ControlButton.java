@@ -6,7 +6,6 @@ import src.utilities.ExpEvaluator;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -24,20 +23,34 @@ public class ControlButton extends JButton {
         this.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                char lastChar = OutputData.getCommandInput().charAt(OutputData.getCommandInput().length()-1);
+
                 switch (type){
                     case "AC":
                         OutputData.setCalculatedOutput("");
                         OutputData.setCommandInput("0");
                         break;
                     case "+/-":
-                        //FIXME
+                        // last char entered must be either a digit or .
+                        if(Character.isDigit(lastChar) || lastChar == '.'){
+                            int lastPlusIndex = OutputData.getCommandInput().lastIndexOf("+");
+                            int lastMinusIndex = OutputData.getCommandInput().lastIndexOf("-");
+                            int lastMultipIndex = OutputData.getCommandInput().lastIndexOf("x");
+                            int lastDivisionIndex = OutputData.getCommandInput().lastIndexOf("÷");
+                            int lastModIndex = OutputData.getCommandInput().lastIndexOf("%");
+                            int lastDotIndex = OutputData.getCommandInput().lastIndexOf(".");
+
+                            int[] indicesArr = {lastPlusIndex, lastMinusIndex, lastMultipIndex, lastDivisionIndex, lastModIndex, lastDotIndex};
+                            int whereToAddMinus = ArrayUtils.findMax(indicesArr, 0, indicesArr.length-1);
+
+                            OutputData.setCommandInput(OutputData.getCommandInput().substring(0, whereToAddMinus+1) + "(-" + OutputData.getCommandInput().substring(whereToAddMinus+1) + ")");
+                        }
                         break;
                     case "=":
-                        OutputData.setCalculatedOutput("" + ExpEvaluator.evaluate(OutputData.getCommandInput()));
+                        OutputData.setCalculatedOutput("" + ExpEvaluator.evaluateComplexExp(OutputData.getCommandInput()));
                         OutputData.setCommandInput("0");
                         break;
                     case "+", "-", "x", "÷", "%", ".":
-                        char lastChar = OutputData.getCommandInput().charAt(OutputData.getCommandInput().length()-1);
                         if(lastChar == '+' || lastChar == '-' || lastChar == 'x' || lastChar == '÷' || lastChar == '%'){
                             if(type.equals(".")){
                                 OutputData.setCommandInput(OutputData.getCommandInput() + "0" + type);

@@ -40,4 +40,17 @@ public class ArrayUtils {
 
         return max;
     }
+
+    public static int countOccurences(int[] arr, int startIndex, int endIndex, int val){
+        int occurrences = 0;
+
+        if(arr != null && arr.length != 0 && startIndex >= 0 && endIndex < arr.length && startIndex <= endIndex){
+            for(int element : arr){
+                if(element == val)
+                    occurrences++;
+            }
+        }
+
+        return occurrences;
+    }
 }
